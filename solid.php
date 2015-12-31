@@ -15,6 +15,7 @@ $notify_tmpl = array(
 		'first'=>array('value'=>'','color'=>'#173177')
 	)
 );
+$slack_rot = 'https://hooks.slack.com/services/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';
 $key = '294ef3f6c15f19f4a2a2df492bedc95a';
 $access_token_url = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s';
 $appid = 'wxc32fbd38f1048e22';
@@ -104,6 +105,15 @@ function post_method($url, $data, $header='')
 //file_put_contents('/tmp/solid.log',$result."\n",FILE_APPEND);
 	return $result;
 }
+function send_to_slack($msg)
+{
+	global $slack_rot;
+	if($msg > 20)return;
+	$msg = '当前土壤湿度为：'.$msg.'%';
+	$data = 'payload={"channel": "#mynotice", "text": "'.$msg.'"}';
+	$command = "curl -X POST --data-urlencode '".$data."' {$slack_rot} > /dev/null 2>&1";
+	exec($command);	
+}
 
 //send_notify($argv[1]*100);
 $result = send_data($argv[1]*100);
@@ -113,3 +123,5 @@ $command = 'cat /sys/class/thermal/thermal_zone0/temp';
 exec($command, $r1, $r2);
 $val = $r1[0]/1000;
 send_data($val, 343089, 380665, false);
+
+send_to_slack($argv[1]*100);
