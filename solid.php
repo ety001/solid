@@ -124,4 +124,4 @@ exec($command, $r1, $r2);
 $val = $r1[0]/1000;
 send_data($val, 343089, 380665, false);
 
-send_to_slack($argv[1]*100);
+//send_to_slack($argv[1]*100);
